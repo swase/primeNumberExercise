@@ -5,15 +5,15 @@ FROM eclipse-temurin:17-jdk-alpine AS build
 WORKDIR /app
 
 # Copy Maven wrapper & project files
-COPY mvnw .
-COPY .mvn .mvn
-COPY pom.xml .
+COPY .mvn/ .mvn
+COPY mvnw pom.xml ./
+RUN ./mvnw dependency:go-offline
 
 # Download dependencies (cached layer)
 RUN ./mvnw dependency:go-offline
 
 # Copy the rest of the project
-COPY src src
+COPY src ./src
 
 # Build the Spring Boot fat jar (skip tests for faster build)
 RUN ./mvnw clean package -DskipTests
