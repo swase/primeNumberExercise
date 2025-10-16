@@ -1,0 +1,71 @@
+openapi: 3.0.3
+info:
+  title: Prime Numbers API
+  version: 1.2.0
+paths:
+  /primeNumbers:
+    get:
+      tags: [PrimeNumbers]
+      summary: Get prime numbers (JSON)
+      operationId: getPrimeNumbers
+      parameters:
+        - $ref: '#/components/parameters/limitParam'
+      responses:
+        '200':
+          description: Object containing array of prime numbers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrimeNumberResponse'
+              example:
+                primeNumbers: [ 2, 3, 5, 7, 11, 13 ]
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/PrimeNumberResponse'
+              example: |
+                <PrimeNumberResponse>
+                  <primeNumbers>
+                    <prime>2</prime>
+                    <prime>3</prime>
+                    <prime>5</prime>
+                    <prime>7</prime>
+                    <prime>11</prime>
+                    <prime>13</prime>
+                  </primeNumbers>
+                </PrimeNumberResponse>
+        '400':
+          description: Invalid limit
+
+components:
+  parameters:
+    limitParam:
+      name: n
+      in: query
+      description: Upper limit (inclusive) up to which to return prime numbers. Must be ≥ 2.
+      required: true
+      schema:
+        type: integer
+        format: int32
+        minimum: 2
+        example: 100
+
+  schemas:
+    Prime:
+      type: integer
+      format: int32
+
+    PrimeNumberResponse:
+      type: object
+      xml:
+        name: PrimeNumberResponse
+      required: [primeNumbers]
+      properties:
+        primeNumbers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Prime'
+            xml:
+              name: prime
+          xml:
+            name: primeNumbers
+            wrapped: true
