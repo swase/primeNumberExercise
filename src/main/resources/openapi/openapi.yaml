@@ -47,6 +47,7 @@ components:
         type: integer
         format: int32
         minimum: 2
+        maximum: 250000000
         example: 100
 
   schemas:
@@ -56,8 +57,6 @@ components:
 
     PrimeNumberResponse:
       type: object
-      xml:
-        name: PrimeNumberResponse
       required: [primeNumbers]
       properties:
         primeNumbers:
@@ -65,7 +64,32 @@ components:
           items:
             $ref: '#/components/schemas/Prime'
             xml:
-              name: prime
+              name: "prime"
           xml:
-            name: primeNumbers
+            name: prime-numbers-list
             wrapped: true
+    ErrorResponse:
+      type: object
+      required:
+        - status
+        - error
+        - title
+        - description
+      properties:
+        status:
+          type: integer
+          format: int32
+          description: HTTP status code
+          example: 400
+        error:
+          type: string
+          description: Short error type or code
+          example: "Bad Request"
+        title:
+          type: string
+          description: Human-readable title for the error
+          example: "Validation Failed"
+        description:
+          type: string
+          description: Detailed description of the error
+          example: "Parameter 'n' must be greater than 0"

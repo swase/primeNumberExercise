@@ -6,32 +6,26 @@ import java.util.List;
 
 public class PrimesNaive {
 
-    public static List<Integer> getPrimes(int limit) {
-        if (limit < 2) return Collections.emptyList();
-        if (limit == 2) return List.of(2);
+    public static List<Integer> determinePrimes(int n) {
+        if (n < 2) return Collections.emptyList();
+        if (n == 2) return List.of(2);
 
-        List<Integer> res = new ArrayList<>();
-        res.add(2);
+        List<Integer> primes = new ArrayList<>(PrimeShared.determineInitialCapacity(n));
+        primes.add(2);
 
-        for (int j = 3; j <= limit; j += 2) {
-            if (isPrime(j)) {
-                res.add(j);
+        for (int j = 3; j <= n; j += 2) {
+            if (isPrimeByPrimes(j, primes)) {
+                primes.add(j);
             }
         }
-        return res;
+        return primes;
     }
 
-    // Ignore even
-    private static boolean isPrime(int n) {
-        for (int i = 3; i <= n; i += 2) {
-            if (n % i == 0 && n != i) {
-                return false;
-            }
+    private static boolean isPrimeByPrimes(int x, List<Integer> existingPrimes) {
+        for (int p : existingPrimes) {
+            if ((long) p * p > x) break;
+            if (x % p == 0) return false;
         }
         return true;
-    }
-
-    private static boolean isEven(long n) {
-        return n % 2 == 0;
     }
 }
