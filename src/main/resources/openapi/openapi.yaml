@@ -10,6 +10,7 @@ paths:
       operationId: getPrimeNumbers
       parameters:
         - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/algorithmParam'
       responses:
         '200':
           description: Object containing array of prime numbers
@@ -18,20 +19,26 @@ paths:
               schema:
                 $ref: '#/components/schemas/PrimeNumberResponse'
               example:
-                primeNumbers: [ 2, 3, 5, 7, 11, 13 ]
+                primes: [ 2, 3, 5, 7, 11, 13 ]
+                durationMillis: 86
+                algorithmUsed: ERATOS
+                numberOfPrimes: 6
             application/xml:
               schema:
                 $ref: '#/components/schemas/PrimeNumberResponse'
               example: |
                 <PrimeNumberResponse>
-                  <primeNumbers>
-                    <prime>2</prime>
-                    <prime>3</prime>
-                    <prime>5</prime>
-                    <prime>7</prime>
-                    <prime>11</prime>
-                    <prime>13</prime>
-                  </primeNumbers>
+                  <primes>
+                    <primes>2</primes>
+                    <primes>3</primes>
+                    <primes>5</primes>
+                    <primes>7</primes>
+                    <primes>11</primes>
+                    <primes>13</primes>
+                  </primes>
+                	<durationMillis>85</durationMillis>
+                    <algorithmUsed>ERATOS</algorithmUsed>
+                    <numberOfPrimes>6</numberOfPrimes>
                 </PrimeNumberResponse>
         '400':
           description: Invalid limit
@@ -39,7 +46,7 @@ paths:
 components:
   parameters:
     limitParam:
-      name: n
+      name: limit
       in: query
       description: Upper limit (inclusive) up to which to return prime numbers. Must be ≥ 2.
       required: true
@@ -47,25 +54,76 @@ components:
         type: integer
         format: int32
         minimum: 2
+        maximum: 250000000
         example: 100
 
+    algorithmParam:
+      name: algo
+      in: query
+      description: Upper limit (inclusive) up to which to return prime numbers. Must be ≥ 2.
+      required: false
+      schema:
+        allOf:
+          - $ref: '#/components/schemas/AlgorithmType'
+        default: ERATOS
+
   schemas:
+    AlgorithmType:
+      type: string
+      enum: [NAIVE, ERATOS, ATKINS]
+
+
     Prime:
       type: integer
       format: int32
 
     PrimeNumberResponse:
       type: object
-      xml:
-        name: PrimeNumberResponse
       required: [primeNumbers]
       properties:
-        primeNumbers:
+        primes:
           type: array
           items:
             $ref: '#/components/schemas/Prime'
             xml:
-              name: prime
+              name: "prime"
           xml:
-            name: primeNumbers
+            name: prime-numbers-list
             wrapped: true
+        durationMillis:
+          type: integer
+          format: int64
+          description: "Execution time in milliseconds"
+        algorithmUsed:
+          type: string
+        numberOfPrimes:
+          type: integer
+          format: int32
+
+    ErrorResponse:
+      type: object
+      required:
+        - status
+        - error
+        - title
+        - description
+      properties:
+        status:
+          type: integer
+          format: int32
+          description: HTTP status code
+          example: 400
+        error:
+          type: string
+          description: Short error type or code
+          example: "Bad Request"
+        title:
+          type: string
+          description: Human-readable title for the error
+          example: "Validation Failed"
+        description:
+          type: string
+          description: Detailed description of the error
+          example: "Parameter 'n' must be greater than 0"
+      xml:
+        name: ErrorResponse
