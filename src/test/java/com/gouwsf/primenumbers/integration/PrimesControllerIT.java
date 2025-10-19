@@ -45,7 +45,7 @@ class PrimesControllerIT {
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .body("primes", hasItems(2,3,5,7,11,13,17,19,23,29))
             .body("primes.size()", greaterThanOrEqualTo(10))
-            .body("durationNanos", greaterThanOrEqualTo(0));
+            .body("durationMillis", greaterThanOrEqualTo(0));
     }
 
     @Test
@@ -60,7 +60,7 @@ class PrimesControllerIT {
         .then()
             .statusCode(200)
             .contentType(startsWith(MediaType.APPLICATION_XML_VALUE))
-            .body("PrimeNumberResponse.durationNanos", notNullValue())
+            .body("PrimeNumberResponse.durationMillis", notNullValue())
             .body("PrimeNumberResponse.primes.primes.size()", greaterThanOrEqualTo(4))
             .body("PrimeNumberResponse.primes.primes[0]", anyOf(equalTo("2"), equalTo("3")));
     }

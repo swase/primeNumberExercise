@@ -47,7 +47,8 @@ Returns a `PrimeNumberResponse` object.
 |-----------------|-----------|---------------------------------------------------------|
 | `primeNumbers`  | `array`   | The list of prime numbers up to `limit`.                |
 | `algorithmUsed` | `string`  | The algorithm applied (`NAIVE`, `ERATOS`, or `ATKINS`). |
-| `durationNanos` | `integer` | Time taken to compute, in nanoseconds.                  |
+| `durationMillis` | `integer` | Time taken to compute, in milli-seconds.                |
+| `numberOfPrimes` | `integer` | Total number of primes generated.                       | 
 
 ### Examples
 

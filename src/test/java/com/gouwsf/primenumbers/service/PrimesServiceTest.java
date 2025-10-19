@@ -50,7 +50,7 @@ class PrimesServiceTest {
         // Verify behaviour
         assertNotNull(resp);
         assertEquals(expected, resp.getPrimes(), "primes list mismatch");
-        assertTrue(resp.getDurationNanos() >= 0, "duration should be non-negative");
+        assertTrue(resp.getDurationMillis() >= 0, "duration should be non-negative");
 
         verifyCalledOnce(algo, limit);
         verifyNoMoreInteractionsExceptChosen(algo);

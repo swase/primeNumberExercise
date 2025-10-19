@@ -42,7 +42,7 @@ class PrimesControllerTest {
 
         var body = new PrimeNumberResponse.Builder()
                 .primes(List.of(2, 3, 5, 7, 11, 13, 17, 19, 23, 29))
-                .durationNanos(1234L)
+                .durationMillis(1234L)
                 .build();
 
         Mockito.when(primesService.generatePrimes(eq(limit), eq(algo)))
@@ -56,7 +56,7 @@ class PrimesControllerTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.primes[0]").value(2))
                 .andExpect(jsonPath("$.primes.length()").value(10))
-                .andExpect(jsonPath("$.durationNanos").value(1234));
+                .andExpect(jsonPath("$.durationMillis").value(1234));
 
         Mockito.verify(primesService).generatePrimes(eq(limit), eq(algo));
         Mockito.verifyNoMoreInteractions(primesService);
