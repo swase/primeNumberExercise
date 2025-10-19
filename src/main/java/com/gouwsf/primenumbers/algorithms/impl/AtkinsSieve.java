@@ -1,5 +1,6 @@
-package com.gouwsf.primenumbers.algorithms;
+package com.gouwsf.primenumbers.algorithms.impl;
 
+import com.gouwsf.primenumbers.algorithms.PrimesGenerator;
 import com.gouwsf.primenumbers.model.AlgorithmType;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
@@ -12,6 +13,12 @@ import java.util.List;
 public class AtkinsSieve implements PrimesGenerator {
     private final AlgorithmType type = AlgorithmType.ATKINS;
 
+    /**
+     * Computes all prime numbers up to a given upper bound using the Sieve of Atkins algorithm
+     *
+     * @param limit the upper bound (inclusive) for prime generation;
+     * @return a list of all prime numbers ≤ {@code limit}, in ascending order;
+     */
     public List<Integer> determinePrimes(int limit) {
         if (limit < 2) return Collections.emptyList();
         if (limit == 2) return List.of(2);

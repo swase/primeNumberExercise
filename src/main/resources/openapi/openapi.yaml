@@ -19,20 +19,26 @@ paths:
               schema:
                 $ref: '#/components/schemas/PrimeNumberResponse'
               example:
-                primeNumbers: [ 2, 3, 5, 7, 11, 13 ]
+                primes: [ 2, 3, 5, 7, 11, 13 ]
+                durationMillis: 86
+                algorithmUsed: ERATOS
+                numberOfPrimes: 6
             application/xml:
               schema:
                 $ref: '#/components/schemas/PrimeNumberResponse'
               example: |
                 <PrimeNumberResponse>
-                  <primeNumbers>
-                    <prime>2</prime>
-                    <prime>3</prime>
-                    <prime>5</prime>
-                    <prime>7</prime>
-                    <prime>11</prime>
-                    <prime>13</prime>
-                  </primeNumbers>
+                  <primes>
+                    <primes>2</primes>
+                    <primes>3</primes>
+                    <primes>5</primes>
+                    <primes>7</primes>
+                    <primes>11</primes>
+                    <primes>13</primes>
+                  </primes>
+                	<durationMillis>85</durationMillis>
+                    <algorithmUsed>ERATOS</algorithmUsed>
+                    <numberOfPrimes>6</numberOfPrimes>
                 </PrimeNumberResponse>
         '400':
           description: Invalid limit
@@ -59,7 +65,7 @@ components:
       schema:
         allOf:
           - $ref: '#/components/schemas/AlgorithmType'
-            default: ERATOS
+        default: ERATOS
 
   schemas:
     AlgorithmType:
@@ -84,12 +90,15 @@ components:
           xml:
             name: prime-numbers-list
             wrapped: true
-        durationNanos:
+        durationMillis:
           type: integer
           format: int64
-          description: "Execution time in nanoseconds"
+          description: "Execution time in milliseconds"
         algorithmUsed:
           type: string
+        numberOfPrimes:
+          type: integer
+          format: int32
 
     ErrorResponse:
       type: object

@@ -1,6 +1,7 @@
 package com.gouwsf.primenumbers.exception;
 
 import com.gouwsf.primenumbers.model.ErrorResponse;
+import com.gouwsf.primenumbers.service.PrimesService;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,12 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+/**
+ * Global Exception Handler for handling error response.
+ *
+ * Ensures consistent response using generated ErrorResponse model generated from OAS
+ * number generation to {@link ErrorResponse}.
+ */
 @RestControllerAdvice
 @Slf4j
 class GlobalExceptionHandler {
@@ -52,6 +59,7 @@ class GlobalExceptionHandler {
         log.error("Exception thrown. cause: {} message: {}", ex.getCause(), ex.getMessage());
 
         var errorResponse = ErrorResponse.builder()
+                .status(status.value())
                 .error(status.getReasonPhrase())
                 .title(errTitle)
                 .description(description)

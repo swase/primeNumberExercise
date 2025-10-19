@@ -8,6 +8,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * REST controller that exposes endpoints for generating prime numbers.
+ * <p>
+ * Implements {@link PrimeNumbersApi}, which defines the API contract
+ * generated from the OpenAPI specification. Delegates the actual prime
+ * number generation to {@link PrimesService}.
+ */
 @RestController
 @RequiredArgsConstructor
 public class PrimesController implements PrimeNumbersApi {

@@ -9,11 +9,21 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 
-
+/**
+ * Default implementation of {@link PrimesService} that delegates prime number
+ * generation to different {@link PrimesGenerator} strategies.
+ * <p>
+ * At application startup, all {@code PrimesGenerator} beans are injected
+ * and stored in a lookup map by their {@link AlgorithmType}. This allows
+ * clients to request prime numbers using a specific algorithm.
+ * <p>
+ * Each call to {@link #generatePrimes(int, AlgorithmType)} is timed and
+ * returns a {@link PrimeNumberResponse} containing the generated primes,
+ * the algorithm used, and the execution duration in nanoseconds.
+ */
 @Service
 public class PrimesServiceImpl implements PrimesService {
 
@@ -42,7 +52,8 @@ public class PrimesServiceImpl implements PrimesService {
         return new PrimeNumberResponse.Builder()
                 .primes(result)
                 .algorithmUsed(generator.getType().name())
-                .durationNanos(end - start)
+                .durationMillis((end - start)/ 1_000_000)
+                .numberOfPrimes(result.size())
                 .build();
     }
 

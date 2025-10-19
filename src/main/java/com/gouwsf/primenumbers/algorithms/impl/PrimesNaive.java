@@ -1,5 +1,6 @@
-package com.gouwsf.primenumbers.algorithms;
+package com.gouwsf.primenumbers.algorithms.impl;
 
+import com.gouwsf.primenumbers.algorithms.PrimesGenerator;
 import com.gouwsf.primenumbers.model.AlgorithmType;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
@@ -14,14 +15,20 @@ public class PrimesNaive implements PrimesGenerator {
 
     private final AlgorithmType type = AlgorithmType.NAIVE;
 
-    public List<Integer> determinePrimes(int n) {
-        if (n < 2) return Collections.emptyList();
-        if (n == 2) return List.of(2);
+    /**
+     * Computes all prime numbers up to a given upper bound using optimised naive approach.
+     *
+     * @param limit the upper bound (inclusive) for prime generation;
+     * @return a list of all prime numbers ≤ {@code limit}, in ascending order;
+     */
+    public List<Integer> determinePrimes(int limit) {
+        if (limit < 2) return Collections.emptyList();
+        if (limit == 2) return List.of(2);
 
-        List<Integer> primes = new ArrayList<>(determineInitialCapacity(n));
+        List<Integer> primes = new ArrayList<>(determineInitialCapacity(limit));
         primes.add(2);
 
-        for (int j = 3; j <= n; j += 2) {
+        for (int j = 3; j <= limit; j += 2) {
             if (isPrimeByPrimes(j, primes)) {
                 primes.add(j);
             }
