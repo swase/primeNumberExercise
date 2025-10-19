@@ -10,6 +10,7 @@ paths:
       operationId: getPrimeNumbers
       parameters:
         - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/algorithmParam'
       responses:
         '200':
           description: Object containing array of prime numbers
@@ -39,7 +40,7 @@ paths:
 components:
   parameters:
     limitParam:
-      name: n
+      name: limit
       in: query
       description: Upper limit (inclusive) up to which to return prime numbers. Must be ≥ 2.
       required: true
@@ -50,7 +51,22 @@ components:
         maximum: 250000000
         example: 100
 
+    algorithmParam:
+      name: algo
+      in: query
+      description: Upper limit (inclusive) up to which to return prime numbers. Must be ≥ 2.
+      required: false
+      schema:
+        allOf:
+          - $ref: '#/components/schemas/AlgorithmType'
+            default: ERATOS
+
   schemas:
+    AlgorithmType:
+      type: string
+      enum: [NAIVE, ERATOS, ATKINS]
+
+
     Prime:
       type: integer
       format: int32
@@ -59,7 +75,7 @@ components:
       type: object
       required: [primeNumbers]
       properties:
-        primeNumbers:
+        primes:
           type: array
           items:
             $ref: '#/components/schemas/Prime'
@@ -68,6 +84,13 @@ components:
           xml:
             name: prime-numbers-list
             wrapped: true
+        durationNanos:
+          type: integer
+          format: int64
+          description: "Execution time in nanoseconds"
+        algorithmUsed:
+          type: string
+
     ErrorResponse:
       type: object
       required:

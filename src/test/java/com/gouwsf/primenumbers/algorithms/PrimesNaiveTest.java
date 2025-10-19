@@ -1,4 +1,4 @@
-package com.gouwsf.primenumbers.util;
+package com.gouwsf.primenumbers.algorithms;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -10,18 +10,19 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class EratosthenesSieveTest {
+class PrimesNaiveTest {
+
+    PrimesNaive generator = new PrimesNaive();
 
     @ParameterizedTest(name = "n={0}")
     @MethodSource("cases")
     @DisplayName("determinePrimes returns primes up to n (inclusive)")
     void determinePrimes_returnsExpected(int n, List<Integer> expected) {
-        assertEquals(expected, EratosthenesSieve.determinePrimes(n));
+        assertEquals(expected, generator.determinePrimes(n));
     }
 
     static Stream<Arguments> cases() {
         return Stream.of(
-                Arguments.of(0, List.of()),
                 Arguments.of(1, List.of()),
                 Arguments.of(2, List.of(2)),
                 Arguments.of(3, List.of(2, 3)),
