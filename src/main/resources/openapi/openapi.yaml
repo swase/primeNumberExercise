@@ -125,3 +125,5 @@ components:
           type: string
           description: Detailed description of the error
           example: "Parameter 'n' must be greater than 0"
+      xml:
+        name: ErrorResponse

@@ -85,6 +85,26 @@ curl "https://primenumberexercise.onrender.com/primeNumbers?limit=10&algo=ERATOS
 ```
 ---
 
+#### ErrorResponse: JSON
+```json
+{
+  "status": 400,
+  "error": "Bad Request",
+  "title": "Validation Failed",
+  "description": "Parameter 'n' must be greater than 0"
+}
+```
+
+#### ErrorResponse: XML
+```xml
+<ErrorResponse>
+  <status>400</status>
+  <error>Bad Request</error>
+  <title>Validation Failed</title>
+  <description>Parameter 'n' must be greater than 0</description>
+</ErrorResponse>
+```
+
 ## Time and Space Complexity
 
 | Algorithm             | Time Complexity  | Space Complexity | Overview                                                                  |
