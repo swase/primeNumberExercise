@@ -6,6 +6,7 @@ import lombok.Getter;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
 
@@ -34,6 +35,25 @@ public class PrimesNaive implements PrimesGenerator {
             }
         }
         return primes;
+    }
+
+    @Override
+    public void extendSegment(int fromExclusive, int toInclusive, ArrayList<Integer> basePrimes) {
+        if (toInclusive <= Math.max(1, fromExclusive)) return;
+
+        var capacity = Math.max(determineInitialCapacity(toInclusive), basePrimes.size());
+        basePrimes.ensureCapacity(capacity);
+
+        if ((fromExclusive + 1) % 2 == 0) { // if even
+            fromExclusive++;
+        }
+
+        int lastKnown = basePrimes.get(basePrimes.size() - 1);
+        for (int i = fromExclusive + 1; i <= toInclusive; i += 2) {
+            if (isPrimeByPrimes(i, basePrimes) && i > lastKnown) {
+                basePrimes.add(i);
+            }
+        }
     }
 
     private static boolean isPrimeByPrimes(int x, List<Integer> existingPrimes) {

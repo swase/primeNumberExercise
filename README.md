@@ -10,7 +10,7 @@ A simple SpringBoot RESTful application used to generate prime numbers up to and
 ```
 git clone git@github.com:swase/primeNumberExercise.git
 
-cd PrimeNumberExercise
+cd primeNumberExercise
 
 mvn clean install
 
