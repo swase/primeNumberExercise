@@ -1,7 +1,6 @@
 package com.gouwsf.primenumbers.exception;
 
 import com.gouwsf.primenumbers.model.ErrorResponse;
-import com.gouwsf.primenumbers.service.PrimesService;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

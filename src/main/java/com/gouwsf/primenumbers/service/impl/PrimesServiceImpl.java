@@ -5,6 +5,7 @@ import com.gouwsf.primenumbers.model.AlgorithmType;
 import com.gouwsf.primenumbers.model.PrimeNumberResponse;
 import com.gouwsf.primenumbers.service.PrimesService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,6 +37,11 @@ public class PrimesServiceImpl implements PrimesService {
     }
 
     @Override
+    @Cacheable(
+            cacheNames = "primesByAlgoAndLimit",
+            key = "T(java.lang.String).format('%s:%d', #algo.name(), #limit)",
+            condition = "#limit > 1000000 && #limit < 100000000"
+    )
     public PrimeNumberResponse generatePrimes(int limit, AlgorithmType algo) {
         return timedResponseWrapper(primeGenerators.get(algo), limit);
     }

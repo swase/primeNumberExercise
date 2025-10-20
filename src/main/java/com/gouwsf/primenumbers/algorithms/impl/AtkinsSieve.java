@@ -38,14 +38,13 @@ public class AtkinsSieve implements PrimesGenerator {
         final int upper = toInclusive;
         if (upper < lower) return;
 
-        // 1) Atkin quadratic toggling restricted to [lower, upper]
+        // 1) Atkin quadratic toggling
         boolean[] segment = doInitialPrimesEstimate(lower, upper);
 
-        // 2) Eliminate multiples of prime squares within [lower, upper]
-        // Assumption: basePrimes contains at least all primes up to floor(sqrt(upper)).
+        // 2) Eliminate multiples of prime squares
         filterOutNonPrimes(segment, lower, upper, basePrimes);
 
-        // 3) Append discovered primes from this segment, preserving order & avoiding duplicates
+        // 3) Append discovered primes to existing
         final int lastKnown = basePrimes.isEmpty() ? 1 : basePrimes.get(basePrimes.size() - 1);
         for (int i = 0; i < segment.length; i++) {
             if (segment[i]) {

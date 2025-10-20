@@ -1,8 +1,8 @@
 package com.gouwsf.primenumbers.service;
 
+import com.gouwsf.primenumbers.algorithms.PrimesGenerator;
 import com.gouwsf.primenumbers.algorithms.impl.AtkinsSieve;
 import com.gouwsf.primenumbers.algorithms.impl.EratosthenesSieve;
-import com.gouwsf.primenumbers.algorithms.PrimesGenerator;
 import com.gouwsf.primenumbers.algorithms.impl.PrimesNaive;
 import com.gouwsf.primenumbers.model.AlgorithmType;
 import com.gouwsf.primenumbers.model.PrimeNumberResponse;
