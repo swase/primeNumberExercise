@@ -1,9 +1,11 @@
 # PrimesAPI
+A simple Spring Boot REST API that generates prime numbers up to (and including) a given input.
 
-### 🔗 [Render Deployment](https://primenumberexercise.onrender.) : https://primenumberexercise.onrender.com
-### 🔗 [Swagger Link](https://primenumberexercise.onrender.com/swagger-ui/index.html)
-A simple SpringBoot RESTful application used to generate prime numbers up to and including a given input.
+### 🔗 Live
+- **Render**: https://primenumberexercise.onrender.com
+- **Swagger UI**: https://primenumberexercise.onrender.com/swagger-ui/index.html
 
+> ⚠️ Note: This runs on Render’s free tier. The service may “sleep.” The first request after sleep can take **> 1 minute** to wake up.
 ---
 
 ## Project Set-up
@@ -18,30 +20,51 @@ mvn spring-boot:run
 ```
 
 ---
-## Overview
-There are 3 algorithms that are implemented and can be chosen at runtime via query param. Default being Sieve of Eratosthenes.
-The algorithms chosen are Optimised Naive approach, Sieve of Eratosthenes and Atkins Sieve.
+## 🧠 Overview
 
-XML or JSON response can also be chosen using headers 'application/xml' or 'application/json' respectively. For XML I have chosen to wrap XML response.
+There are **three algorithms** implemented, which can be chosen at runtime via the `algo` query parameter.  
+The default is **Sieve of Eratosthenes**.
 
-### Some Considerations
-The minimum input is 2 (lowest prime) and max is 250_000_000. Considering limited RAM on chosen deployment and space complexity of sieve algorithms, the max limit was chosen.
+- `NAIVE` – Optimised naive approach
+- `ERATOS` – Sieve of Eratosthenes (default)
+- `ATKINS` – Sieve of Atkin
 
-Using Swagger to execute the query for large numbers is not practical and may struggle to load. For larger numbers its best to use curl cmd.
+Responses can be returned in **XML** or **JSON** depending on the `Accept` header (`application/xml` or `application/json`).  
+For XML, the response is **wrapped** for better structure.
 
-As the service is deployed on free tier, Render will put deployment in 'sleep' mode after a while. This will increase initial request to > 1min. Hitting the swagger or primes end point will automatically wake up the service.
+---
 
-#### Cache
-Cache is enabled using Caffiene (in memory) using 'algo' and 'limit' as key and response body as value. I've chosen this approach (admittedly not as efficient), as I wish to return ALGO type and execution duration. 
+### ⚙️ Considerations
 
-Further optimisation could have been made by customising how list of primes is stored. Storing rather a single list of primes that is extended as limit is increased on incoming request.
+- **Input range**: Minimum input is `2` (lowest prime). Maximum input is `250,000,000`.  
+  This limit is set due to RAM constraints on the deployment environment and the space complexity of sieve algorithms.
+- **Swagger UI**: Executing large queries via Swagger is not practical (UI may hang).  
+  For large limits, use `curl` or a direct HTTP client.
+- **Render free tier**: The deployment goes into *sleep mode* after inactivity.  
+  First request after sleep can take **> 1 minute**. Accessing Swagger or `/primeNumbers` wakes the service automatically.
 
-Cache will expire after 2hours or when cache reaches ~100mb.
+---
 
-#### Concurrent Execution
-I've implemented algorithm in such a way as to allow for concurrent execution. Thread pool is created at startup and maxes out at number of cores. 
+### 🗄️ Cache
 
-Concurrent execution is set to start after an upper limit of 500_000 (otherwise will be single thread). This is a hard limit at service layer. Although you could easily be switched out for configurable cutoff.
+- Implemented with **Caffeine (in-memory)**.
+- **Cache key**: combination of `algo` and `limit`.
+- **Cache value**: full response body (so that `algorithmUsed` and `durationMillis` are preserved).
+- **Expiry**: entries expire after **2 hours** or when cache size reaches ~**100 MB**.
+
+> ⚡️ Note: This approach is straightforward but not the most memory-efficient.  
+> A possible optimization would be to maintain a **single expandable list of primes**, extending it as requests for higher limits arrive.
+
+---
+
+### 🧵 Concurrent Execution
+
+- A **thread pool** is created at startup (size = number of CPU cores).
+- For `limit ≥ 500,000`, prime generation uses **segmented concurrent execution**.
+- For smaller requests, execution runs on a **single thread**.
+- Current cutoff (`500,000`) is a **hard-coded service-layer limit**, but it could be made configurable.
+
+---
 
 ## API Endpoints
 
