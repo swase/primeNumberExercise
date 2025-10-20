@@ -16,8 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class EratosthenesSieveTest {
 
     EratosthenesSieve generator = new EratosthenesSieve();
-    PrimesNaive groundTruthGenerator = new PrimesNaive();
-
 
     @ParameterizedTest(name = "n={0}")
     @MethodSource("cases")
@@ -67,5 +65,4 @@ class EratosthenesSieveTest {
                 org.junit.jupiter.params.provider.Arguments.of(20, 30, List.of(23,29))
         );
     }
-
 }

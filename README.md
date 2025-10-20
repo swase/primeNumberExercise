@@ -1,6 +1,6 @@
 # PrimesAPI
 
-### 🔗 [Main Render Deployment Page](https://primenumberexercise.onrender.com) : https://primenumberexercise.onrender.com
+### 🔗 [Render Deployment](https://primenumberexercise.onrender.) : https://primenumberexercise.onrender.com
 ### 🔗 [Swagger Link](https://primenumberexercise.onrender.com/swagger-ui/index.html)
 A simple SpringBoot RESTful application used to generate prime numbers up to and including a given input.
 
@@ -116,8 +116,7 @@ curl "https://primenumberexercise.onrender.com/primeNumbers?limit=10&algo=ERATOS
 
 ---
 
-
-## 🧩 Technologies Used
+## Technologies Used
 
 - Java 17
 - Maven
@@ -130,6 +129,14 @@ curl "https://primenumberexercise.onrender.com/primeNumbers?limit=10&algo=ERATOS
 - Lombok
 - Jackson Databind
 ---
+
+## Considerations
+Using Swagger to execute the query for large numbers is not practical and may struggle to load. For larger numbers its best to use curl cmd.
+
+As the service is deployed on free tier, Render will put deployment in 'sleep' mode after a while. This will increase initial request to > 1min. Hitting the swagger or primes end point will automatically wake up the service.
+
+## Extending
+The existing algorithms implement a method that allows for extending an existing list of primes. This could allow for more optimised caching (single growing cache entry) and allow for concurrent primes generation.
 
 ## 📬 Contact
 For any info please contact myself, Francois. email: gouwsf@gmail.com
