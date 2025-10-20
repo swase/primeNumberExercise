@@ -27,6 +27,22 @@ XML or JSON response can also be chosen using headers 'application/xml' or 'appl
 ### Some Considerations
 The minimum input is 2 (lowest prime) and max is 250_000_000. Considering limited RAM on chosen deployment and space complexity of sieve algorithms, the max limit was chosen.
 
+Using Swagger to execute the query for large numbers is not practical and may struggle to load. For larger numbers its best to use curl cmd.
+
+As the service is deployed on free tier, Render will put deployment in 'sleep' mode after a while. This will increase initial request to > 1min. Hitting the swagger or primes end point will automatically wake up the service.
+
+#### Cache
+Cache is enabled using Caffiene (in memory) using 'algo' and 'limit' as key and response body as value. I've chosen this approach (admittedly not as efficient), as I wish to return ALGO type and execution duration. 
+
+Further optimisation could have been made by customising how list of primes is stored. Storing rather a single list of primes that is extended as limit is increased on incoming request.
+
+Cache will expire after 2hours or when cache reaches ~100mb.
+
+#### Concurrent Execution
+I've implemented algorithm in such a way as to allow for concurrent execution. Thread pool is created at startup and maxes out at number of cores. 
+
+Concurrent execution is set to start after an upper limit of 500_000 (otherwise will be single thread). This is a hard limit at service layer. Although you could easily be switched out for configurable cutoff.
+
 ## API Endpoints
 
 ### `/primeNumbers`
@@ -130,13 +146,5 @@ curl "https://primenumberexercise.onrender.com/primeNumbers?limit=10&algo=ERATOS
 - Jackson Databind
 ---
 
-## Considerations
-Using Swagger to execute the query for large numbers is not practical and may struggle to load. For larger numbers its best to use curl cmd.
-
-As the service is deployed on free tier, Render will put deployment in 'sleep' mode after a while. This will increase initial request to > 1min. Hitting the swagger or primes end point will automatically wake up the service.
-
-## Extending
-The existing algorithms implement a method that allows for extending an existing list of primes. This could allow for more optimised caching (single growing cache entry) and allow for concurrent primes generation.
-
 ## 📬 Contact
-For any info please contact myself, Francois. email: gouwsf@gmail.com
+For any info please contact myself, Francois. email: francois.gouws@natwest.com

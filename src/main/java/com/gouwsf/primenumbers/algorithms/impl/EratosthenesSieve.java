@@ -36,16 +36,18 @@ public class EratosthenesSieve implements PrimesGenerator {
     }
 
     @Override
-    public void extendSegment(int fromExclusive, int toInclusive, ArrayList<Integer> basePrimes) {
+    public List<Integer> determinePrimes(int fromExclusive, int toInclusive, List<Integer> basePrimes) {
+        if (fromExclusive == 0) return determinePrimes(toInclusive);
+
         if (basePrimes == null) {
             throw new IllegalArgumentException("basePrimes must not be null");
         }
-        if (toInclusive <= fromExclusive || toInclusive < 2) return;
+        if (toInclusive <= fromExclusive || toInclusive < 2) List.of();
 
         final int start = Math.max(fromExclusive + 1, 2);
         final int end = toInclusive;
         final int len = end - start + 1;
-        if (len <= 0) return;
+        if (len <= 0) List.of();
 
         final boolean[] sieve = new boolean[len];
 
@@ -58,16 +60,19 @@ public class EratosthenesSieve implements PrimesGenerator {
                 sieve[(int)(j - start)] = true;
             }
         }
+        // The extension from base primes
+        var res = new ArrayList<Integer>(determineInitialCapacity(len));
 
         final int lastKnown = basePrimes.isEmpty() ? 1 : basePrimes.get(basePrimes.size() - 1);
         for (int i = 0; i < len; i++) {
             if (!sieve[i]) {
                 int newPrime = start + i;
                 if (newPrime > lastKnown) {
-                    basePrimes.add(newPrime);
+                    res.add(newPrime);
                 }
             }
         }
+        return res;
     }
 
 

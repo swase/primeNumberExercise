@@ -28,7 +28,7 @@ public interface PrimesGenerator {
      * @return a list of prime numbers ≤ {@code limit}, in ascending order
      */
     List<Integer> determinePrimes(int limit);
-    void extendSegment(int fromExclusive, int toInclusive, ArrayList<Integer> basePrimes);
+    List<Integer> determinePrimes(int fromExclusive, int toInclusive, List<Integer> basePrimes);
     /**
      * Estimates an initial capacity for the list of prime numbers
      * up to {@code n}, using the prime number theorem approximation {@code n / log(n)}.

@@ -29,14 +29,14 @@ public class AtkinsSieve implements PrimesGenerator {
         return convertSieveToList(sieve);
     }
 
-    @Override
-    public void extendSegment(int fromExclusive, int toInclusive, ArrayList<Integer> basePrimes) {
+    public List<Integer> determinePrimes(int fromExclusive, int toInclusive, List<Integer> basePrimes) {
         if (basePrimes == null) throw new IllegalArgumentException("basePrimes must not be null");
-        if (toInclusive <= fromExclusive || toInclusive < 2) return;
+        if (toInclusive <= fromExclusive || toInclusive < 2) return new ArrayList<>();
+        if (fromExclusive == 0) return determinePrimes(toInclusive);
 
-        final int lower = Math.max(fromExclusive + 1, 2); // (fromExclusive, ...]
+        final int lower = Math.max(fromExclusive + 1, 2);
         final int upper = toInclusive;
-        if (upper < lower) return;
+        if (upper < lower) return new ArrayList<>();
 
         // 1) Atkin quadratic toggling
         boolean[] segment = doInitialPrimesEstimate(lower, upper);
@@ -44,16 +44,19 @@ public class AtkinsSieve implements PrimesGenerator {
         // 2) Eliminate multiples of prime squares
         filterOutNonPrimes(segment, lower, upper, basePrimes);
 
-        // 3) Append discovered primes to existing
+        // THe extension from base primes
+        var res = new ArrayList<Integer>(determineInitialCapacity(upper - lower));
+
         final int lastKnown = basePrimes.isEmpty() ? 1 : basePrimes.get(basePrimes.size() - 1);
         for (int i = 0; i < segment.length; i++) {
             if (segment[i]) {
                 int candidate = lower + i;
                 if (candidate > lastKnown) {
-                    basePrimes.add(candidate);
+                    res.add(candidate);
                 }
             }
         }
+        return res;
     }
 
 

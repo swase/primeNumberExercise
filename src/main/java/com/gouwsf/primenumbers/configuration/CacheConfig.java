@@ -19,7 +19,7 @@ public class CacheConfig {
                     if (value instanceof int[] arr) return arr.length * 4;
                     return 64;
                 })
-                .expireAfterAccess(6, TimeUnit.HOURS)
+                .expireAfterAccess(2, TimeUnit.HOURS)
                 .recordStats();
     }
 

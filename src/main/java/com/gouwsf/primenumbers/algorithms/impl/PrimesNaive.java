@@ -37,22 +37,24 @@ public class PrimesNaive implements PrimesGenerator {
     }
 
     @Override
-    public void extendSegment(int fromExclusive, int toInclusive, ArrayList<Integer> basePrimes) {
-        if (toInclusive <= Math.max(1, fromExclusive)) return;
-
-        var capacity = Math.max(determineInitialCapacity(toInclusive), basePrimes.size());
-        basePrimes.ensureCapacity(capacity);
+    public List<Integer> determinePrimes(int fromExclusive, int toInclusive, List<Integer> basePrimes) {
+        if (toInclusive <= Math.max(1, fromExclusive)) return List.of();
+        if (fromExclusive == 0) return determinePrimes(toInclusive);
 
         if ((fromExclusive + 1) % 2 == 0) { // if even
             fromExclusive++;
         }
 
+        // The extension from base primes
+        var res = new ArrayList<Integer>(determineInitialCapacity(toInclusive - fromExclusive));
+
         int lastKnown = basePrimes.get(basePrimes.size() - 1);
         for (int i = fromExclusive + 1; i <= toInclusive; i += 2) {
             if (isPrimeByPrimes(i, basePrimes) && i > lastKnown) {
-                basePrimes.add(i);
+                res.add(i);
             }
         }
+        return res;
     }
 
     private static boolean isPrimeByPrimes(int x, List<Integer> existingPrimes) {

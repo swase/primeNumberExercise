@@ -6,6 +6,7 @@ import com.gouwsf.primenumbers.algorithms.impl.EratosthenesSieve;
 import com.gouwsf.primenumbers.algorithms.impl.PrimesNaive;
 import com.gouwsf.primenumbers.model.AlgorithmType;
 import com.gouwsf.primenumbers.model.PrimeNumberResponse;
+import com.gouwsf.primenumbers.service.impl.PrimesAsyncExecutorService;
 import com.gouwsf.primenumbers.service.impl.PrimesServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -28,6 +29,7 @@ class PrimesServiceTest {
     @Mock AtkinsSieve atkins;
     @Mock EratosthenesSieve eratos;
     @Mock PrimesNaive naive;
+    @Mock PrimesAsyncExecutorService executorService;
 
     @BeforeEach
     void stubGenerators() {
@@ -43,7 +45,7 @@ class PrimesServiceTest {
         // Stub only the chosen generator
         when(getChosenMock(algo).determinePrimes(anyInt())).thenReturn(expected);
 
-        var service = new PrimesServiceImpl(List.of(atkins, eratos, naive));
+        var service = new PrimesServiceImpl(List.of(atkins, eratos, naive), executorService);
 
         PrimeNumberResponse resp = service.generatePrimes(limit, algo);
 
