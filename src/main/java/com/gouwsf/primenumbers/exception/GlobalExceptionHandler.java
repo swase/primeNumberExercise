@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 /**
  * Global Exception Handler for handling error response.
@@ -30,7 +31,7 @@ class GlobalExceptionHandler {
                 .findFirst()
                 .orElse("Validation failed");
 
-        return handleErrorResponse(ex, HttpStatus.BAD_REQUEST, message, "Validation Error");
+        return constructErrorResponse(ex, HttpStatus.BAD_REQUEST, message, "Validation Error");
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -41,20 +42,51 @@ class GlobalExceptionHandler {
                 .findFirst()
                 .orElse("Constraint violation");
 
-        return handleErrorResponse(ex, HttpStatus.BAD_REQUEST, message, "Validation Error");
+        return constructErrorResponse(ex, HttpStatus.BAD_REQUEST, message, "Validation Error");
     }
 
     @ExceptionHandler({RuntimeException.class})
     public ResponseEntity<Object> handleRuntimeException(RuntimeException ex) {
-        return handleErrorResponse(ex, HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_ERROR_MSG, "");
+        return constructErrorResponse(ex, HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_ERROR_MSG, "");
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Object> handleIllegalArgument(IllegalArgumentException ex) {
-        return handleErrorResponse(ex, HttpStatus.BAD_REQUEST, "Illegal argument during prime number generation","Illegal argument");
+        return constructErrorResponse(ex, HttpStatus.BAD_REQUEST, "Illegal argument during prime number generation","Illegal argument");
     }
 
-    private ResponseEntity<Object> handleErrorResponse(Exception ex, HttpStatus status, String description, String errTitle) {
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<Object> handleEnumConversionError(MethodArgumentTypeMismatchException ex) {
+        var message = "";
+        if (ex.getRequiredType() != null && ex.getRequiredType().isEnum()) {
+            message = getEnumErrorMessage(ex);
+        } else {
+            message = String.format("Invalid parameter: %s with value: %s", ex.getParameter().getParameterName(), ex.getValue());
+        }
+        return constructErrorResponse(
+                ex,
+                HttpStatus.BAD_REQUEST,
+                message,
+                ex.getPropertyName()
+        );
+    }
+
+    public String getEnumErrorMessage(MethodArgumentTypeMismatchException ex) {
+        return String.format(
+                "Invalid value '%s' for parameter '%s'. Allowed values are: %s",
+                ex.getValue(),
+                ex.getName(),
+                String.join(", ",
+                        java.util.Arrays.stream(ex.getRequiredType().getEnumConstants())
+                                .map(Object::toString)
+                                .toList()
+                )
+        );
+    }
+
+
+    private ResponseEntity<Object> constructErrorResponse(Exception ex, HttpStatus status, String description, String errTitle) {
         log.error("Exception thrown. cause: {} message: {}", ex.getCause(), ex.getMessage());
 
         var errorResponse = ErrorResponse.builder()

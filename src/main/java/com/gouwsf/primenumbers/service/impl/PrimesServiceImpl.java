@@ -30,7 +30,7 @@ public class PrimesServiceImpl implements PrimesService {
 
     private Map<AlgorithmType, PrimesGenerator> primeGenerators;
     private final PrimesAsyncExecutorService primesAsyncExecutorService;
-    private final int ASYNC_LIMIT_START = 500_000;
+    private final int ASYNC_LIMIT_START = 10;
 
     @Autowired
     public PrimesServiceImpl(List<PrimesGenerator> algorithms, PrimesAsyncExecutorService primesAsyncExecutorService) {

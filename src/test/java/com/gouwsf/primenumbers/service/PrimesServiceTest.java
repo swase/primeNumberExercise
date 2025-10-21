@@ -18,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -44,6 +45,7 @@ class PrimesServiceTest {
     void generatePrimes_parameterized(AlgorithmType algo, int limit, List<Integer> expected) {
         // Stub only the chosen generator
         when(getChosenMock(algo).determinePrimes(anyInt())).thenReturn(expected);
+//        when(getChosenMock(executorService).determinePrimes(anyInt())).thenReturn(new CompletableFuture<List<Integer>>(expected));
 
         var service = new PrimesServiceImpl(List.of(atkins, eratos, naive), executorService);
 
