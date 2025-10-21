@@ -6,7 +6,7 @@ import com.gouwsf.primenumbers.algorithms.impl.EratosthenesSieve;
 import com.gouwsf.primenumbers.algorithms.impl.PrimesNaive;
 import com.gouwsf.primenumbers.model.AlgorithmType;
 import com.gouwsf.primenumbers.model.PrimeNumberResponse;
-import com.gouwsf.primenumbers.service.impl.PrimesAsyncExecutorService;
+import com.gouwsf.primenumbers.service.impl.PrimesExecutorService;
 import com.gouwsf.primenumbers.service.impl.PrimesServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,9 +16,9 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,24 +30,27 @@ class PrimesServiceTest {
     @Mock AtkinsSieve atkins;
     @Mock EratosthenesSieve eratos;
     @Mock PrimesNaive naive;
-    @Mock PrimesAsyncExecutorService executorService;
+    @Mock PrimesExecutorService executorService;
+
+    PrimesService service;
 
     @BeforeEach
     void stubGenerators() {
-        when(atkins.getType()).thenReturn(AlgorithmType.ATKINS);
+        when(atkins.getType()).thenReturn(AlgorithmType.ATKIN);
         when(eratos.getType()).thenReturn(AlgorithmType.ERATOS);
         when(naive.getType()).thenReturn(AlgorithmType.NAIVE);
+
+        service = new PrimesServiceImpl(List.of(atkins, eratos, naive), executorService);
+
+        ReflectionTestUtils.setField(service, "multiThreadStart", Integer.MAX_VALUE);
     }
 
     @DisplayName("generatePrimes uses the correct generator and returns duration")
     @ParameterizedTest(name = "algo={0}, limit={1}")
     @MethodSource("cases")
-    void generatePrimes_parameterized(AlgorithmType algo, int limit, List<Integer> expected) {
+    void generatePrimes_parameterized_withoutExecutor(AlgorithmType algo, int limit, List<Integer> expected) {
         // Stub only the chosen generator
-        when(getChosenMock(algo).determinePrimes(anyInt())).thenReturn(expected);
-//        when(getChosenMock(executorService).determinePrimes(anyInt())).thenReturn(new CompletableFuture<List<Integer>>(expected));
-
-        var service = new PrimesServiceImpl(List.of(atkins, eratos, naive), executorService);
+        when(getChosenMock(algo).determinePrimes(limit)).thenReturn(expected);
 
         PrimeNumberResponse resp = service.generatePrimes(limit, algo);
 
@@ -58,14 +61,29 @@ class PrimesServiceTest {
 
         verifyCalledOnce(algo, limit);
         verifyNoMoreInteractionsExceptChosen(algo);
+        verify(executorService, never()).computeAsync(anyInt(), any(PrimesGenerator.class));
     }
 
-    // Data
+    @DisplayName("generatePrimes uses the correct generator and returns duration")
+    @ParameterizedTest(name = "algo={0}, limit={1}")
+    @MethodSource("cases")
+    void generatePrimes_parameterized_withExecutor(AlgorithmType algo, int limit, List<Integer> expected) {
+        ReflectionTestUtils.setField(service, "ASYNC_LIMIT_START", limit - 1);
+
+        // Stub only the chosen generator
+        when(executorService.computeAsync(anyInt(), any(PrimesGenerator.class))).thenReturn(expected);
+
+        service.generatePrimes(limit, algo);
+
+        // Verify behaviour
+        verify(executorService, times(1)).computeAsync(limit, getChosenMock(algo));
+    }
+
     static Stream<Arguments> cases() {
         return Stream.of(
-                // ATKINS
+                // ATKIN
                 org.junit.jupiter.params.provider.Arguments.of(
-                        AlgorithmType.ATKINS, 10, List.of(2,3,5,7)),
+                        AlgorithmType.ATKIN, 10, List.of(2,3,5,7)),
                 // ERATOS
                 org.junit.jupiter.params.provider.Arguments.of(
                         AlgorithmType.ERATOS, 20, List.of(2,3,5,7,11,13,17,19)),
@@ -78,7 +96,7 @@ class PrimesServiceTest {
     /* --- helpers --- */
     private PrimesGenerator getChosenMock(AlgorithmType algo) {
         return switch (algo) {
-            case ATKINS -> atkins;
+            case ATKIN -> atkins;
             case ERATOS  -> eratos;
             case NAIVE  -> naive;
         };
@@ -86,7 +104,7 @@ class PrimesServiceTest {
 
     private void verifyCalledOnce(AlgorithmType algo, int limit) {
         switch (algo) {
-            case ATKINS -> {
+            case ATKIN -> {
                 verify(atkins, times(1)).determinePrimes(limit);
                 verify(eratos, never()).determinePrimes(anyInt());
                 verify(naive, never()).determinePrimes(anyInt());
@@ -106,7 +124,7 @@ class PrimesServiceTest {
 
     private void verifyNoMoreInteractionsExceptChosen(AlgorithmType algo) {
         switch (algo) {
-            case ATKINS -> verifyNoMoreInteractions(eratos, naive);
+            case ATKIN -> verifyNoMoreInteractions(eratos, naive);
             case ERATOS  -> verifyNoMoreInteractions(atkins, naive);
             case NAIVE  -> verifyNoMoreInteractions(atkins, eratos);
         }

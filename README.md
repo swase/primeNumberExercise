@@ -27,7 +27,7 @@ The default is **Sieve of Eratosthenes**.
 
 - `NAIVE` – Optimised naive approach
 - `ERATOS` – Sieve of Eratosthenes (default)
-- `ATKINS` – Sieve of Atkin
+- `ATKIN` – Sieve of Atkin
 
 Responses can be returned in **XML** or **JSON** depending on the `Accept` header (`application/xml` or `application/json`).  
 For XML, the response is **wrapped** for better structure.
@@ -73,21 +73,21 @@ Generates all prime numbers up to a given limit, using a chosen algorithm.
 
 ### Query Parameters
 
-| Name   | Type                         | Required    | Default  | Description                                                                           |
-|--------|------------------------------|-------------|----------|---------------------------------------------------------------------------------------|
-| `limit` | `integer`                    | ✅ Yes       | –        | Upper bound (inclusive). Must be ≥ 2. and <= 250_000_000                              |
-| `algo`  | `AlgorithmType` (enum)       | ❌ No        | `ERATOS` | Algorithm to use for prime generation. Supported values: `NAIVE`, `ERATOS`, `ATKINS`. |
+| Name   | Type                         | Required    | Default  | Description                                                                          |
+|--------|------------------------------|-------------|----------|--------------------------------------------------------------------------------------|
+| `limit` | `integer`                    | ✅ Yes       | –        | Upper bound (inclusive). Must be ≥ 2. and <= 250_000_000                             |
+| `algo`  | `AlgorithmType` (enum)       | ❌ No        | `ERATOS` | Algorithm to use for prime generation. Supported values: `NAIVE`, `ERATOS`, `ATKIN`. |
 
 ### Response
 
 Returns a `PrimeNumberResponse` object.
 
-| Field           | Type      | Description                                             |
-|-----------------|-----------|---------------------------------------------------------|
-| `primeNumbers`  | `array`   | The list of prime numbers up to `limit`.                |
-| `algorithmUsed` | `string`  | The algorithm applied (`NAIVE`, `ERATOS`, or `ATKINS`). |
-| `durationMillis` | `integer` | Time taken to compute, in milli-seconds.                |
-| `numberOfPrimes` | `integer` | Total number of primes generated.                       | 
+| Field           | Type      | Description                                            |
+|-----------------|-----------|--------------------------------------------------------|
+| `primeNumbers`  | `array`   | The list of prime numbers up to `limit`.               |
+| `algorithmUsed` | `string`  | The algorithm applied (`NAIVE`, `ERATOS`, or `ATKIN`). |
+| `durationMillis` | `integer` | Time taken to compute, in milli-seconds.               |
+| `numberOfPrimes` | `integer` | Total number of primes generated.                      | 
 
 ### Examples
 

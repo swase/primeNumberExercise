@@ -3,3 +3,5 @@ spring:
     name: primenumbers
 server:
   port: 8081
+config:
+  multi-thread-limit-start: 750_000

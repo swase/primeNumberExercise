@@ -70,7 +70,7 @@ components:
   schemas:
     AlgorithmType:
       type: string
-      enum: [NAIVE, ERATOS, ATKINS]
+      enum: [NAIVE, ERATOS, ATKIN]
 
 
     Prime:

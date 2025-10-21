@@ -63,13 +63,9 @@ public class EratosthenesSieve implements PrimesGenerator {
         // The extension from base primes
         var res = new ArrayList<Integer>(determineInitialCapacity(len));
 
-        final int lastKnown = basePrimes.isEmpty() ? 1 : basePrimes.get(basePrimes.size() - 1);
         for (int i = 0; i < len; i++) {
             if (!sieve[i]) {
-                int newPrime = start + i;
-                if (newPrime > lastKnown) {
-                    res.add(newPrime);
-                }
+                res.add(start + i);
             }
         }
         return res;

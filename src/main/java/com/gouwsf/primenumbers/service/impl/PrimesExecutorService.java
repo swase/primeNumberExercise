@@ -1,7 +1,6 @@
 package com.gouwsf.primenumbers.service.impl;
 
 import com.gouwsf.primenumbers.algorithms.PrimesGenerator;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -9,10 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
-public class PrimesAsyncExecutorService {
+public class PrimesExecutorService {
 
     private static final int MAX_SEGMENTS = 10;
     private final ExecutorService executor;
@@ -25,8 +26,8 @@ public class PrimesAsyncExecutorService {
      * @param limit upper bound limit - inclusivea
      * @param generator chosen primes generator (based on per implementation basis)
      */
-    public CompletableFuture<List<Integer>> computeAsync(int limit, PrimesGenerator generator) {
-        if (limit < 2) return CompletableFuture.completedFuture(List.of());
+    public List<Integer> computeAsync(int limit, PrimesGenerator generator) {
+        if (limit < 2) return List.of();
 
         // Compute base primes - only need to go to sqrt(limit)
         int root = (int) Math.floor(Math.sqrt(limit));
@@ -39,22 +40,19 @@ public class PrimesAsyncExecutorService {
         CompletableFuture<List<Integer>>[] futures = new CompletableFuture[segments.size()];
         int i = 0;
         for (Segment segment: segments) {
+//            var tmp = generator.determinePrimes(segment.low() - 1, segment.hi(), basePrimes);
             futures[i] = CompletableFuture.supplyAsync(
-                    () -> generator.determinePrimes(segment.low(), segment.hi(), basePrimes),
+                    () -> generator.determinePrimes(segment.low() - 1, segment.hi(), basePrimes),
                     executor
             );
             i++;
         }
 
-        // Wait for all futures and join - keep in ascending order
-        return CompletableFuture.allOf(futures)
-                .thenApply(v -> {
-                    List<Integer> merged = new ArrayList<>();
-                    for (CompletableFuture<List<Integer>> f : futures) {
-                        merged.addAll(f.join());
-                    }
-                    return merged;
-                });
+
+        return Stream.of(futures)
+                .map(CompletableFuture::join)
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
     }
 
     /**
