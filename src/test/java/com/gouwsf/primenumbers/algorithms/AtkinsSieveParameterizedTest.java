@@ -14,7 +14,7 @@ class AtkinsSieveParameterizedTest {
 
     private final AtkinsSieve generator = new AtkinsSieve();
 
-    @ParameterizedTest(name = "limit={0} -> {1}")
+    @ParameterizedTest
     @MethodSource("cases")
     void determinesPrimes_forVariousLimits(int limit, List<Integer> expected) {
         List<Integer> actual = generator.determinePrimes(limit);
@@ -37,6 +37,31 @@ class AtkinsSieveParameterizedTest {
             org.junit.jupiter.params.provider.Arguments.of(50, List.of(2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47))
         );
     }
+
+    @ParameterizedTest
+    @MethodSource("expectedNumberOfPrimes")
+    void determinesPrimes_forVariousLimits_expectedNumberOfPrimes(int limit, int expectedNumPrimes) {
+        List<Integer> actual = generator.determinePrimes(limit);
+        assertEquals(expectedNumPrimes, actual.size(),
+                () -> "Unexpected number primes for limit=" + limit + ",expected=" + expectedNumPrimes + ", got=" + actual.size());
+    }
+
+    static Stream<org.junit.jupiter.params.provider.Arguments> expectedNumberOfPrimes() {
+        return Stream.of(
+                // edge cases
+                org.junit.jupiter.params.provider.Arguments.of(0, 0),
+                org.junit.jupiter.params.provider.Arguments.of(1, 0),
+                org.junit.jupiter.params.provider.Arguments.of(2, 1),
+                org.junit.jupiter.params.provider.Arguments.of(3, 2),
+                // small ranges
+                org.junit.jupiter.params.provider.Arguments.of(10, 4),
+                // a bit larger
+                org.junit.jupiter.params.provider.Arguments.of(30, 10),
+                org.junit.jupiter.params.provider.Arguments.of(1000, 168),
+                org.junit.jupiter.params.provider.Arguments.of(100, 25)
+        );
+    }
+
     /* ------------------------------  Extend Segment Method Test Cases ---------------------------------------------- */
 
     @DisplayName("extendSegment finds primes in (L,R]")

@@ -5,6 +5,7 @@ import com.gouwsf.primenumbers.model.AlgorithmType;
 import com.gouwsf.primenumbers.model.PrimeNumberResponse;
 import com.gouwsf.primenumbers.service.PrimesService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -29,16 +30,18 @@ import java.util.stream.Collectors;
 public class PrimesServiceImpl implements PrimesService {
 
     private Map<AlgorithmType, PrimesGenerator> primeGenerators;
-    private final PrimesAsyncExecutorService primesAsyncExecutorService;
-    private final int ASYNC_LIMIT_START = 10;
+    private final PrimesExecutorService primesExecutorService;
+
+    @Value("${config.max-segmentation:750_000}")
+    private int ASYNC_LIMIT_START;
 
     @Autowired
-    public PrimesServiceImpl(List<PrimesGenerator> algorithms, PrimesAsyncExecutorService primesAsyncExecutorService) {
+    public PrimesServiceImpl(List<PrimesGenerator> algorithms, PrimesExecutorService primesExecutorService) {
         this.primeGenerators = algorithms.stream()
                 .collect(Collectors.toMap(
                         PrimesGenerator::getType,
                         alg -> alg));
-        this.primesAsyncExecutorService = primesAsyncExecutorService;
+        this.primesExecutorService = primesExecutorService;
     }
 
     @Override
@@ -57,8 +60,7 @@ public class PrimesServiceImpl implements PrimesService {
         start = System.nanoTime();
         try {
             if (limit > ASYNC_LIMIT_START) {
-                result = primesAsyncExecutorService.computeAsync(limit, generator)
-                        .join();
+                result = primesExecutorService.computeAsync(limit, generator);
             } else {
                 result = generator.determinePrimes(limit);
             }

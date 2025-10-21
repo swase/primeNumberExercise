@@ -38,19 +38,23 @@ public class PrimesNaive implements PrimesGenerator {
 
     @Override
     public List<Integer> determinePrimes(int fromExclusive, int toInclusive, List<Integer> basePrimes) {
-        if (toInclusive <= Math.max(1, fromExclusive)) return List.of();
-        if (fromExclusive == 0) return determinePrimes(toInclusive);
+        if (toInclusive < 2 || toInclusive <= fromExclusive) return List.of();
 
-        if ((fromExclusive + 1) % 2 == 0) { // if even
-            fromExclusive++;
+        if (fromExclusive < 2) {
+            return determinePrimes(toInclusive);
         }
 
-        // The extension from base primes
         var res = new ArrayList<Integer>(determineInitialCapacity(toInclusive - fromExclusive));
+        int start = fromExclusive + 1;
+        if (start % 2 == 0) {
+            if (start == 2) {
+                res.add(2);
+            }
+            start++;
+        }
 
-        int lastKnown = basePrimes.get(basePrimes.size() - 1);
-        for (int i = fromExclusive + 1; i <= toInclusive; i += 2) {
-            if (isPrimeByPrimes(i, basePrimes) && i > lastKnown) {
+        for (int i = start; i <= toInclusive; i += 2) {
+            if (isPrimeByPrimes(i, basePrimes)) {
                 res.add(i);
             }
         }

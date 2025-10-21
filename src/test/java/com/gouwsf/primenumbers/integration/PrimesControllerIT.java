@@ -35,17 +35,17 @@ class PrimesControllerIT {
     @EnumSource(value = AlgorithmType.class)
     void primeNumbers_json_allAlgos(AlgorithmType algo) {
         given()
-            .accept(MediaType.APPLICATION_JSON_VALUE)
-            .queryParam("limit", 30)
-            .queryParam("algo", algo.name())
-        .when()
-            .get("/primeNumbers")
-        .then()
-            .statusCode(200)
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .body("primes", hasItems(2,3,5,7,11,13,17,19,23,29))
-            .body("primes.size()", greaterThanOrEqualTo(10))
-            .body("durationMillis", greaterThanOrEqualTo(0));
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .queryParam("limit", 30)
+                .queryParam("algo", algo.name())
+                .when()
+                .get("/primeNumbers")
+                .then()
+                .statusCode(200)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body("primes", hasItems(2,3,5,7,11,13,17,19,23,29))
+                .body("primes.size()", greaterThanOrEqualTo(10))
+                .body("durationMillis", greaterThanOrEqualTo(0));
     }
 
     @Test

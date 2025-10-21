@@ -12,7 +12,7 @@ import java.util.List;
 @Component
 @Getter
 public class AtkinsSieve implements PrimesGenerator {
-    private final AlgorithmType type = AlgorithmType.ATKINS;
+    private final AlgorithmType type = AlgorithmType.ATKIN;
 
     /**
      * Computes all prime numbers up to a given upper bound using the Sieve of Atkins algorithm
@@ -47,13 +47,9 @@ public class AtkinsSieve implements PrimesGenerator {
         // THe extension from base primes
         var res = new ArrayList<Integer>(determineInitialCapacity(upper - lower));
 
-        final int lastKnown = basePrimes.isEmpty() ? 1 : basePrimes.get(basePrimes.size() - 1);
         for (int i = 0; i < segment.length; i++) {
             if (segment[i]) {
-                int candidate = lower + i;
-                if (candidate > lastKnown) {
-                    res.add(candidate);
-                }
+                res.add(lower + i);
             }
         }
         return res;
