@@ -68,7 +68,7 @@ class PrimesServiceTest {
     @ParameterizedTest(name = "algo={0}, limit={1}")
     @MethodSource("cases")
     void generatePrimes_parameterized_withExecutor(AlgorithmType algo, int limit, List<Integer> expected) {
-        ReflectionTestUtils.setField(service, "ASYNC_LIMIT_START", limit - 1);
+        ReflectionTestUtils.setField(service, "multiThreadStart", limit - 1);
 
         // Stub only the chosen generator
         when(executorService.computeAsync(anyInt(), any(PrimesGenerator.class))).thenReturn(expected);
