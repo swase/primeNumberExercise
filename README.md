@@ -106,7 +106,7 @@ curl "https://primenumberexercise.onrender.com/primeNumbers?limit=10&algo=ERATOS
       <primes>7</primes>
       <primes>11</primes>
     </primes>
-    <durationNanos>1</durationNanos>
+    <durationMillis>1</durationMillis>
 </APIResponse>
 ```
 
@@ -120,7 +120,7 @@ curl "https://primenumberexercise.onrender.com/primeNumbers?limit=10&algo=ERATOS
 {
     "algorithmUsed": "ERATOS",
     "primes": [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97],
-    "durationNanos": 3000
+    "durationMillis": 3000
 }
 ```
 ---
@@ -151,7 +151,9 @@ curl "https://primenumberexercise.onrender.com/primeNumbers?limit=10&algo=ERATOS
 |-----------------------|------------------|------------------|---------------------------------------------------------------------------|
 | Naive Approach        | O(N * sqrt(N))   | O(N/log(N)))     | Good for Verification of small inputs.                                    |
 | Sieve of Eratosthenes | O(N * loglog(N)) | O(N)             | Fastest for most practical ranges (up to 10¹²) due to simplicity.         |
-| Sieve of Atkin        | O(N)             | O(N)             | More complex than Eratosthenes - can be less efficient for primes <  10¹⁸ |
+| Sieve of Atkin        | *O(N)            | O(N)             | More complex than Eratosthenes - can be less efficient for primes <  10¹⁸ |
+
+*Theoritical is O(N / log(log(N))) when using modified version (enumeration of lattice points). Implemented is O(N), but far simpler and may be more efficient for practical ranges.
 
 ---
 
@@ -159,6 +161,7 @@ curl "https://primenumberexercise.onrender.com/primeNumbers?limit=10&algo=ERATOS
 
 - Java 17
 - Maven
+- Jacoco
 - Spring Boot
 - JUnit 5
 - RestAssured
